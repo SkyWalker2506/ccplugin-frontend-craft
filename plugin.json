@@ -1,0 +1,10 @@
+{
+  "id": "frontend-craft",
+  "name": "Frontend Craft",
+  "version": "1.0.0",
+  "description": "ANF frontend pipeline — high-end site/app build with design system, 21st.dev components, AI assets",
+  "author": "SkyWalker2506",
+  "category": "development",
+  "complexity": "medium",
+  "skills": ["frontend-craft"]
+}

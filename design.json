@@ -1,0 +1,54 @@
+{
+  "cds_version": "1.0",
+  "name": "ccplugin-frontend-craft",
+  "type": "plugin",
+  "input_patterns": [
+    {
+      "type": "slash_command",
+      "commands": [
+        "/run-frontend-craft"
+      ],
+      "args_schema": {
+        "phase": "string?",
+        "stack": "string?"
+      }
+    },
+    {
+      "type": "auto_trigger",
+      "keywords": [
+        "frontend",
+        "landing page",
+        "website",
+        "anf pipeline"
+      ],
+      "confirm": false,
+      "cooldown": 0
+    }
+  ],
+  "output_patterns": [
+    {
+      "type": "terminal_text",
+      "max_lines": 20
+    },
+    {
+      "type": "file_generation",
+      "path": "project scaffold + components + assets"
+    }
+  ],
+  "lifecycle": {
+    "preflight": {
+      "required_tools": [
+        "node",
+        "npm"
+      ],
+      "required_secrets": [],
+      "required_mcp": [
+        "magic-ui"
+      ]
+    }
+  },
+  "error_handling": {
+    "retry_network": true,
+    "max_retries": 2
+  }
+}

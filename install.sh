@@ -18,6 +18,20 @@ if [[ -z "${HOME:-}" ]]; then
     exit 1
 fi
 
+# 0. Optional dependency check
+check_dep() {
+    if ! command -v "$1" &>/dev/null; then
+        echo "  ⚠  $1 not found — required for ${2}. Install it before using that phase."
+    else
+        echo "  ✓  $1"
+    fi
+}
+
+echo "Checking optional dependencies..."
+check_dep ffmpeg "Polish phase (video compression)"
+check_dep netlify "Polish phase (deploy)"
+echo ""
+
 echo "Installing Frontend Craft plugin..."
 
 # 2. Symlink check on $SKILL_DIR

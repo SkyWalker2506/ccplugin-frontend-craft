@@ -433,14 +433,42 @@ Replace all hard-coded values with CSS custom properties:
 - Logo: `alt="[Company name] logo"`
 - AI-generated: describe subject + mood — never write "AI generated image"
 
-**Asset generation:**
+**Asset generation — AUTOMATIC:**
+
+After writing `assets/research.json`, run:
+```bash
+bash scripts/gen-assets.sh assets/research.json
+```
+
+This script runs automatically and:
+1. Generates hero, features, social-proof, cta-bg images
+2. Fetches or generates hero video
+3. Compresses video to H.264 + WebM with ffmpeg
+
+**Fallback chain (automatic, no manual steps):**
+| Priority | Source | Requires | Quality |
+|----------|--------|----------|---------|
+| 1 | Together AI FLUX.1-schnell | `TOGETHER_API_KEY` + credits | AI generated |
+| 2 | HuggingFace FLUX.1-schnell | `HF_TOKEN` | AI generated |
+| 3 | Unsplash stock photo | Nothing | Stock photo |
+| 4 | CSS gradient placeholder | Nothing | Fallback |
+
+**Video fallback chain:**
+| Priority | Source | Requires |
+|----------|--------|----------|
+| 1 | Pexels stock video | `PEXELS_API_KEY` (free to get) |
+| 2 | Pixabay stock video | `PIXABAY_API_KEY` (free to get) |
+| 3 | ffmpeg gradient video | ffmpeg only |
+
+**To enable AI image generation:** add credits to Together AI account.
+**To enable stock video:** get free API key at pexels.com/api and add `PEXELS_API_KEY` to `~/.claude/secrets/secrets.env`.
+
+**Manual generation tools (if needed):**
 | Tool | URL | Free | Best for |
 |------|-----|------|----------|
-| Playground AI | playgroundai.com | 500/day | Hero, section bg |
+| Playground AI | playgroundai.com | 500/day | Custom hero |
 | Ideogram | ideogram.ai | ~25/day | Text-in-image, logos |
 | Higgsfield | higgsfield.ai | 66 credits/day | AI video |
-
-Prompt template: `"High quality [TYPE] for [PRODUCT]. Clean, minimal, premium. No text unless logo."`
 
 ---
 

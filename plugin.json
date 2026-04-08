@@ -6,5 +6,9 @@
   "author": "SkyWalker2506",
   "category": "development",
   "complexity": "medium",
-  "skills": ["frontend-craft"]
+  "skills": ["frontend-craft"],
+  "dependencies": {
+    "required": ["ffmpeg", "netlify-cli"],
+    "optional": ["jq"]
+  }
 }

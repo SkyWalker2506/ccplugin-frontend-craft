@@ -188,6 +188,10 @@ When `/frontend-craft help` is called, print this exactly:
 ║  /frontend-craft          Start interview + build ║
 ║  /frontend-craft help     Show this reference     ║
 ╠══════════════════════════════════════════════════╣
+║  PLATFORMS                                       ║
+║  Web  → Vanilla / Next.js / Astro                ║
+║  Mobile → Flutter / React Native / Expo          ║
+╠══════════════════════════════════════════════════╣
 ║  PHASES (run manually if needed)                 ║
 ║  /frontend-craft setup    Scaffold + tokens       ║
 ║  /frontend-craft assemble Build sections          ║
@@ -196,7 +200,7 @@ When `/frontend-craft help` is called, print this exactly:
 ║  /frontend-craft polish   Animations + deploy     ║
 ╠══════════════════════════════════════════════════╣
 ║  EXISTING PROJECT                                ║
-║  /frontend-craft redesign Sıfırdan tasarla        ║
+║  /frontend-craft redesign Sıfırdan yeniden yaz   ║
 ║  /frontend-craft polish   Mevcut tasarımı geliştir║
 ╠══════════════════════════════════════════════════╣
 ║  SHORTCUTS                                       ║
@@ -298,14 +302,18 @@ Q6:
 
 Q7:
 ```
-Stack?
-  a) Vanilla HTML/CSS/JS
-  b) Next.js
-  c) Astro
-  d) Ne önerirsen
-  e) Diğer → yaz
+Platform / Stack?
+  a) Web — Vanilla HTML/CSS/JS
+  b) Web — Next.js
+  c) Web — Astro
+  d) Mobile — Flutter
+  e) Mobile — React Native / Expo
+  f) Ne önerirsen
+  g) Diğer → yaz
 ```
 → Wait for final answer.
+
+**If d) Flutter or e) React Native selected:** skip web-specific questions and route to the relevant mobile platform section below.
 
 ### Step 3: Build brief
 
@@ -705,3 +713,337 @@ npx netlify-cli deploy --prod --dir=.
 - **Small requests:** Don't run the full pipeline. Targeted Mode only.
 - **Copy:** Never lorem ipsum in the final output. Research and write real copy.
 - **Code:** All values via CSS custom properties — zero hard-coded colors, sizes, or spacing.
+
+---
+
+## Flutter Platform
+
+Triggered when `pubspec.yaml` is detected or user selects Flutter in Q7.
+
+### Platform detection
+
+```
+pubspec.yaml present → Flutter
+lib/ + main.dart → Flutter confirmed
+android/ + ios/ → Flutter confirmed
+```
+
+### Flutter Design Tokens
+
+Instead of CSS variables, create `lib/core/theme/app_theme.dart`:
+
+```dart
+import 'package:flutter/material.dart';
+
+class AppColors {
+  // Primary palette (from brief)
+  static const primary     = Color(0xFF[HEX]);
+  static const surface     = Color(0xFF[HEX]);
+  static const muted       = Color(0xFF[HEX]);
+  static const accent      = Color(0xFF[HEX]);
+
+  // Semantic
+  static const background  = Color(0xFFF8F8F8);
+  static const onBackground= Color(0xFF111111);
+  static const onSurface   = Color(0xFF333333);
+  static const border      = Color(0xFFE0E0E0);
+}
+
+class AppSpacing {
+  static const xs  = 4.0;
+  static const sm  = 8.0;
+  static const md  = 16.0;
+  static const lg  = 24.0;
+  static const xl  = 40.0;
+  static const x2l = 64.0;
+}
+
+class AppRadius {
+  static const sm = Radius.circular(4);
+  static const md = Radius.circular(8);
+  static const lg = Radius.circular(16);
+}
+
+class AppTheme {
+  static ThemeData light() => ThemeData(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      surface: AppColors.surface,
+    ),
+    textTheme: const TextTheme(
+      displayLarge: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.2),
+      headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, height: 1.3),
+      bodyLarge: TextStyle(fontSize: 18, height: 1.5),
+      bodyMedium: TextStyle(fontSize: 16, height: 1.5),
+      bodySmall: TextStyle(fontSize: 14, height: 1.5),
+    ),
+    useMaterial3: true,
+  );
+
+  static ThemeData dark() => ThemeData(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      brightness: Brightness.dark,
+    ),
+    useMaterial3: true,
+  );
+}
+```
+
+### Flutter Assemble
+
+Each "section" is a `StatelessWidget` in `lib/features/[screen]/widgets/`:
+
+```dart
+class HeroSection extends StatelessWidget {
+  const HeroSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSpacing.x2l,
+        horizontal: AppSpacing.lg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Headline', style: Theme.of(context).textTheme.displayLarge),
+          const SizedBox(height: AppSpacing.md),
+          Text('Subline', style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(height: AppSpacing.lg),
+          FilledButton(onPressed: () {}, child: const Text('CTA')),
+        ],
+      ),
+    );
+  }
+}
+```
+
+**File structure for new Flutter project:**
+```
+lib/
+  core/
+    theme/
+      app_theme.dart     → tokens + ThemeData
+      app_colors.dart    → color constants
+  features/
+    home/
+      screens/home_screen.dart
+      widgets/
+        hero_section.dart
+        features_section.dart
+        cta_section.dart
+  main.dart
+assets/
+  images/                → gen-image.sh output
+  research.json
+craft-brief.md
+```
+
+### Flutter Normalize
+
+Scan all `.dart` files for:
+- Hard-coded `Color(0xFF...)` not in AppColors → move to AppColors
+- Hard-coded `double` spacing not using AppSpacing → replace
+- Hard-coded `TextStyle` not in TextTheme → replace
+- `BorderRadius.circular(N)` not using AppRadius → replace
+
+### Flutter Fill
+
+Same copy rules as web. For assets:
+- Run `bash scripts/gen-image.sh` for each section image
+- Add images to `pubspec.yaml` assets section automatically
+- Use `AssetImage` or `Image.asset` with `semanticsLabel` (= alt text equivalent)
+
+### Flutter Polish
+
+**Motion:**
+```dart
+// Implicit animation (preferred)
+AnimatedOpacity(
+  opacity: _visible ? 1.0 : 0.0,
+  duration: const Duration(milliseconds: 250),
+  child: child,
+)
+
+// Scroll-driven reveal
+class RevealOnScroll extends StatefulWidget { ... }
+// Uses VisibilityDetector or custom ScrollController
+```
+
+Respect `MediaQuery.of(context).disableAnimations` — equivalent of prefers-reduced-motion:
+```dart
+final reduceMotion = MediaQuery.of(context).disableAnimations;
+final duration = reduceMotion ? Duration.zero : const Duration(milliseconds: 250);
+```
+
+**Deploy:**
+- Web: `flutter build web --release` → `build/web/` → Netlify or Firebase Hosting
+- iOS: `flutter build ipa`
+- Android: `flutter build appbundle`
+
+### Flutter redesign & polish
+
+`/frontend-craft redesign` on Flutter project:
+- Reads all existing screens and widgets
+- Rewrites theme system (app_theme.dart)
+- Rewrites widget visual layer (padding, colors, typography)
+- Keeps all business logic, state management, navigation verbatim
+
+`/frontend-craft polish` on Flutter project:
+- Checks for: hard-coded Colors, missing AppSpacing usage, missing disableAnimations checks, no semanticsLabel on images
+- Shows diff list → user selects → auto-fix
+
+---
+
+## React Native / Expo Platform
+
+Triggered when `package.json` contains `react-native` or `expo`, or user selects RN in Q7.
+
+### Platform detection
+
+```
+package.json → "react-native" or "expo" in dependencies → React Native
+app.json or app.config.js → Expo confirmed
+app/(tabs)/ or app/(expo-router)/ → Expo Router
+```
+
+### React Native Design Tokens
+
+Create `src/theme/tokens.ts`:
+
+```typescript
+export const colors = {
+  primary:    '[HEX from brief]',
+  surface:    '[HEX]',
+  muted:      '[HEX]',
+  accent:     '[HEX]',
+  background: '#F8F8F8',
+  text:       '#111111',
+  textMuted:  '#666666',
+  border:     '#E0E0E0',
+} as const;
+
+export const spacing = {
+  xs:  4,
+  sm:  8,
+  md:  16,
+  lg:  24,
+  xl:  40,
+  x2l: 64,
+} as const;
+
+export const radius = {
+  sm: 4,
+  md: 8,
+  lg: 16,
+} as const;
+
+export const typography = {
+  display: { fontSize: 40, lineHeight: 48, fontWeight: '700' as const },
+  h1:      { fontSize: 24, lineHeight: 32, fontWeight: '600' as const },
+  body:    { fontSize: 16, lineHeight: 24, fontWeight: '400' as const },
+  small:   { fontSize: 14, lineHeight: 20, fontWeight: '400' as const },
+} as const;
+```
+
+### React Native Assemble
+
+Each screen section as a component in `src/components/`:
+
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { colors, spacing, typography, radius } from '@/theme/tokens';
+
+export function HeroSection() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.headline}>Headline</Text>
+      <Text style={styles.subline}>Subline text here</Text>
+      <Pressable style={styles.cta}>
+        <Text style={styles.ctaText}>CTA</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container:  { padding: spacing.lg, gap: spacing.md },
+  headline:   { ...typography.display, color: colors.text },
+  subline:    { ...typography.body, color: colors.textMuted },
+  cta:        { backgroundColor: colors.primary, borderRadius: radius.md, padding: spacing.md },
+  ctaText:    { ...typography.body, color: '#fff', fontWeight: '600', textAlign: 'center' },
+});
+```
+
+**File structure:**
+```
+src/
+  theme/
+    tokens.ts          → design tokens
+  components/
+    HeroSection.tsx
+    FeaturesSection.tsx
+    CTASection.tsx
+  screens/
+    HomeScreen.tsx
+assets/
+  images/              → gen-image.sh output
+  research.json
+craft-brief.md
+```
+
+### React Native Normalize
+
+Scan all `.tsx/.ts` files for:
+- Inline `color:` strings not using `colors.*` → move to tokens
+- Hard-coded numeric spacing → replace with `spacing.*`
+- Hard-coded `fontSize` → replace with `typography.*`
+- `borderRadius` numbers → replace with `radius.*`
+
+### React Native Polish
+
+**Motion — use `react-native-reanimated` if installed, else `Animated` API:**
+
+```typescript
+// Fade in on mount
+const opacity = useSharedValue(0);
+useEffect(() => {
+  opacity.value = withTiming(1, { duration: 250 });
+}, []);
+
+// Respect reduce motion
+import { AccessibilityInfo } from 'react-native';
+const [reduceMotion, setReduceMotion] = useState(false);
+useEffect(() => {
+  AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
+}, []);
+```
+
+Always check `reduceMotion` before animating — equivalent of `prefers-reduced-motion`.
+
+**Images:**
+```typescript
+<Image
+  source={require('@/assets/images/hero.jpg')}
+  style={{ width: '100%', aspectRatio: 16/9 }}
+  accessibilityLabel="Description of image"  // = alt text
+/>
+```
+
+**Deploy:**
+- Expo: `eas build` + `eas submit`
+- Web: `npx expo export` → Netlify
+
+### React Native redesign & polish
+
+`/frontend-craft redesign` on RN project:
+- Reads all screens and components
+- Rewrites `tokens.ts` + all StyleSheet definitions
+- Keeps navigation, state, API calls verbatim
+
+`/frontend-craft polish` on RN project:
+- Checks: inline colors/spacing, missing accessibilityLabel, no reduceMotion checks
+- Shows diff list → user selects → auto-fix

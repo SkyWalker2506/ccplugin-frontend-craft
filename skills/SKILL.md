@@ -13,14 +13,44 @@ Builds $5-10K quality websites and applications. Works on **new or existing** pr
 
 ## Entry Point
 
-**Always start here** — with or without arguments:
-
 ```
-/frontend-craft
-/frontend-craft start
+/frontend-craft          → Interview + build
+/frontend-craft help     → Show command reference
 ```
 
-This runs the **Interview** first, then executes autonomously.
+---
+
+## help
+
+When `/frontend-craft help` is called, print this exactly:
+
+```
+╔══════════════════════════════════════════════════╗
+║          /frontend-craft — Quick Reference       ║
+╠══════════════════════════════════════════════════╣
+║  /frontend-craft          Start interview + build ║
+║  /frontend-craft help     Show this reference     ║
+╠══════════════════════════════════════════════════╣
+║  PHASES (run manually if needed)                 ║
+║  /frontend-craft setup    Scaffold + tokens       ║
+║  /frontend-craft assemble Build sections          ║
+║  /frontend-craft normalize Unify design system    ║
+║  /frontend-craft fill     Real copy + assets      ║
+║  /frontend-craft polish   Animations + deploy     ║
+╠══════════════════════════════════════════════════╣
+║  SHORTCUTS                                       ║
+║  /frontend-craft add      Add page/section/feature║
+║  /frontend-craft fix      Fix/redesign something  ║
+╠══════════════════════════════════════════════════╣
+║  FILE LAYOUT (after setup)                       ║
+║  index.html               Main entry             ║
+║  src/styles.css           Design tokens + global  ║
+║  src/main.js              JS interactions         ║
+║  components/              Section HTML files      ║
+║  assets/                  Images, video, research ║
+║  craft-brief.md           Project brief           ║
+╚══════════════════════════════════════════════════╝
+```
 
 ---
 
@@ -28,36 +58,99 @@ This runs the **Interview** first, then executes autonomously.
 
 Before touching any file, ask ALL questions in a single message. Never ask one at a time.
 
-### Step 1: Detect context
+### Step 1: Detect context silently
 
-Scan the current directory (Glob, Read) silently:
-- Is there an existing project? (package.json, index.html, src/, app/, pubspec.yaml, etc.)
-- What stack is in use? (React, Next.js, vanilla, Astro, Flutter, etc.)
-- Is there an existing design system? (CSS variables, Tailwind, etc.)
-- Is there existing copy / brand info?
+Scan the current directory (Glob, Read):
+- Existing project? (package.json, index.html, src/, app/, pubspec.yaml)
+- Stack? (React, Next.js, vanilla, Astro, Flutter)
+- Existing design system? (CSS variables, Tailwind config)
+- Existing copy / brand info?
 
-### Step 2: Ask everything at once
+### Step 2: Ask everything at once — with choices
 
-Based on what you found, ask only the questions that are still unknown. Format as a numbered list. Example:
+Format as a single message with numbered questions and lettered options. User responds with just the numbers/letters. Skip questions already answered by context.
+
+**Template:**
 
 ```
-Before I start, a few quick questions:
+Başlayalım. Birkaç şey sormam gerekiyor — hepsini tek mesajda cevapla:
 
-1. What is this project? (one sentence — product, service, or purpose)
-2. Who is it for? (target audience + rough scale)
-3. What do you need built?
-   - Full site (landing + all pages)
-   - Landing page only
-   - A specific page or section (which one?)
-   - Add something to the existing site (what?)
-   - Fix or redesign something (what?)
-4. Style direction: minimal / bold / editorial / corporate / playful / dark / other?
-5. Color preferences: any brand colors, or should I pick?
-6. Any must-have features? (contact form, pricing table, blog, auth, dashboard, etc.)
-7. Stack preference, or use what's here?
+1. Bu ne? (bir cümle)
+   _______________________
+
+2. Kime yönelik?
+   a) B2C (bireysel kullanıcı)
+   b) B2B (şirketler)
+   c) Geliştirici / teknik kitle
+   d) Genel / karma
+   e) Diğer: _______
+
+3. Ne lazım?
+   a) Tam site (landing + birden fazla sayfa)
+   b) Sadece landing page
+   c) Belirli bir sayfa: _______
+   d) Mevcut siteye ekleme: _______
+   e) Sadece bir şeyi düzelt: _______
+
+4. Stil?
+   a) Minimal & clean
+   b) Bold & güçlü
+   c) Editorial & magazine
+   d) Kurumsal & güven veren
+   e) Dark mode ağırlıklı
+   f) Oyuncu & enerjik
+   g) Diğer: _______
+
+5. Renkler?
+   a) Marka rengim var: _______
+   b) Sen seç (stilden çıkar)
+
+6. Olmazsa olmaz özellikler? (varsa birkaçını işaretle)
+   a) Contact form
+   b) Pricing / fiyatlandırma tablosu
+   c) Newsletter kaydı
+   d) Blog / içerik alanı
+   e) Auth (login/signup UI)
+   f) Dashboard shell
+   g) Yok / sadece statik
+
+7. Stack?
+   a) Vanilla HTML/CSS/JS (en hızlı, dependency yok)
+   b) Next.js
+   c) Astro
+   d) Ne önerirsen
+   e) Diğer: _______
 ```
 
-Skip questions already answered by the existing project context.
+### Step 3: Build brief
+
+After answers, write `craft-brief.md` in project root. Then show a **file plan** before creating anything:
+
+```
+Anlıyorum. İşte yapacaklarım:
+
+📁 Dosya yapısı:
+├── index.html              → Ana sayfa (hero + features + CTA + footer)
+├── src/
+│   ├── styles.css          → Design tokens + global styles
+│   └── main.js             → Scroll animasyonları, form handling
+├── components/
+│   ├── hero.html           → Hero section
+│   ├── features.html       → Özellikler grid
+│   └── footer.html         → Footer
+├── assets/
+│   ├── research.json       → Ürün araştırması (Fill fazında)
+│   └── demo/               → Görseller buraya
+└── craft-brief.md          → Proje brief'i
+
+🎨 Stil: [seçilen stil]
+🎯 Scope: [ne yapılacak]
+⚡ Stack: [seçilen stack]
+
+Başlayayım mı? (y / değiştir)
+```
+
+Wait for confirmation. If "değiştir" → adjust specific parts, re-show plan. If "y" → execute without further questions.
 
 ### Step 3: Build a brief
 

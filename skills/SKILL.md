@@ -1,210 +1,397 @@
 ---
 name: frontend-craft
-description: "ANF frontend pipeline — high-end site/app build. Triggers: frontend craft, frontend pipeline, ANF, high-end site, web craft, premium frontend"
-argument-hint: "[setup|assemble|normalize|fill|polish]"
+description: "ANF frontend pipeline — high-end site/app build. Triggers: frontend craft, frontend pipeline, ANF, high-end site, web craft, premium frontend, build me a site, build a landing page, add a page, fix the design"
+argument-hint: "[start|setup|assemble|normalize|fill|polish|add|fix]"
 user-invocable: true
 ---
 
 # /frontend-craft — High-End Frontend Pipeline
 
-ANF (Assemble → Normalize → Fill) + Polish pipeline for building $5-10K quality websites and applications.
+Builds $5-10K quality websites and applications. Works on **new or existing** projects. Handles anything from a single section to a full product site.
 
-## Framework
+---
 
-| Phase | Command | What it does |
-|-------|---------|-------------|
-| Setup | `/frontend-craft setup` | Scaffold project, design tokens, taste skill |
-| Assemble | `/frontend-craft assemble` | 21st.dev components, section layout |
-| Normalize | `/frontend-craft normalize` | Unify design system, CSS custom properties |
-| Fill | `/frontend-craft fill` | Research product, write real copy, generate assets |
-| Polish | `/frontend-craft polish` | Animations, video, scroll effects, deploy |
+## Entry Point
 
-## How to Use
+**Always start here** — with or without arguments:
 
-1. **With ClaudeHQ sprint:** `hq frontend <project>` creates a 5-task sprint and dispatches automatically
-2. **Standalone:** Call `/frontend-craft <phase>` in any project to run a specific phase manually
+```
+/frontend-craft
+/frontend-craft start
+```
 
-## Phase Details
+This runs the **Interview** first, then executes autonomously.
+
+---
+
+## Phase 0 — Interview (ALWAYS FIRST)
+
+Before touching any file, ask ALL questions in a single message. Never ask one at a time.
+
+### Step 1: Detect context
+
+Scan the current directory (Glob, Read) silently:
+- Is there an existing project? (package.json, index.html, src/, app/, pubspec.yaml, etc.)
+- What stack is in use? (React, Next.js, vanilla, Astro, Flutter, etc.)
+- Is there an existing design system? (CSS variables, Tailwind, etc.)
+- Is there existing copy / brand info?
+
+### Step 2: Ask everything at once
+
+Based on what you found, ask only the questions that are still unknown. Format as a numbered list. Example:
+
+```
+Before I start, a few quick questions:
+
+1. What is this project? (one sentence — product, service, or purpose)
+2. Who is it for? (target audience + rough scale)
+3. What do you need built?
+   - Full site (landing + all pages)
+   - Landing page only
+   - A specific page or section (which one?)
+   - Add something to the existing site (what?)
+   - Fix or redesign something (what?)
+4. Style direction: minimal / bold / editorial / corporate / playful / dark / other?
+5. Color preferences: any brand colors, or should I pick?
+6. Any must-have features? (contact form, pricing table, blog, auth, dashboard, etc.)
+7. Stack preference, or use what's here?
+```
+
+Skip questions already answered by the existing project context.
+
+### Step 3: Build a brief
+
+After the user answers, write `craft-brief.md` in the project root:
+
+```markdown
+# [Project Name] — Craft Brief
+> Created: [date]
+
+## What
+[One sentence]
+
+## Who
+[Target audience]
+
+## Scope
+[Exact deliverables — pages, sections, features]
+
+## Style
+[Direction + colors]
+
+## Stack
+[Chosen tech]
+
+## Must-haves
+[Feature list]
+
+## Existing project
+[What was found, what to keep, what to replace]
+```
+
+Show the brief to the user. Ask: **"Good to go? (y / adjust)"**
+
+If adjust: let them correct inline, update the brief, re-confirm.
+
+If yes: proceed to execution.
+
+---
+
+## Phase 1 — Scope Router
+
+Based on the brief, choose the execution path:
+
+| Scope | Path |
+|-------|------|
+| Single section or fix | → [Targeted Mode](#targeted-mode) |
+| Single page | → Setup + Assemble + Normalize + Fill |
+| Full site | → Full ANF + Polish |
+| Add to existing | → [Addon Mode](#addon-mode) |
+| Feature (form, auth, etc.) | → [Feature Mode](#feature-mode) |
+
+---
+
+## Targeted Mode
+
+For small requests ("fix the hero", "add a pricing section", "redesign the nav"):
+
+1. Read the existing file(s)
+2. Understand the current design system (extract variables if any)
+3. Make the targeted change — nothing else
+4. Apply Normalize rules to the changed section only
+5. Fill with real copy if placeholder text is present
+
+---
+
+## Addon Mode
+
+For adding to an existing project:
+
+1. Read the project structure
+2. Identify: routing system, component pattern, CSS approach
+3. Create the new page/section following existing conventions
+4. Do not change files that weren't asked about
+5. Apply Fill phase only to new content
+
+---
+
+## Feature Mode
+
+For functional additions (contact form, pricing, newsletter, auth UI, dashboard, etc.):
+
+1. Build the UI component with real functionality
+2. **Contact form:** HTML form + Netlify Forms (`netlify` attribute) or Formspree endpoint
+3. **Pricing table:** tier comparison, CTA per tier, annual/monthly toggle
+4. **Newsletter:** input + submit + success state (integrate Buttondown or Mailchimp embed)
+5. **Auth UI:** login + signup forms, forgot password flow (UI only unless stack supports it)
+6. **Dashboard shell:** sidebar nav, header, main content area, responsive
+7. Wire up interactions in vanilla JS or the project's framework
+8. Apply all accessibility rules (ARIA, keyboard nav, labels)
+
+---
+
+## Full ANF Pipeline
 
 ### Setup
-- Fetch Leon's Taste Skill (pinned): https://github.com/Leonxlnx/taste-skill/tree/main
-  Note: Pin to specific commit SHA when fetching — check latest stable commit before use.
+
+**Only for new projects or when explicitly asked to scaffold.**
+
 - Create folder structure: `src/`, `assets/`, `components/`, `public/`
+- Install dependencies based on chosen stack
 - Define CSS custom properties:
-  - Spacing: 8px grid system
-    - `--space-xs: 4px`
-    - `--space-sm: 8px`
-    - `--space-md: 16px`
-    - `--space-lg: 24px`
-    - `--space-xl: 40px`
-    - `--space-2xl: 64px`
-  - Colors: `--color-primary`, `--color-surface`, `--color-muted`, `--color-accent`
-  - Typography: max 2 font families, consistent scale
-    - `--text-sm: 0.875rem` (14px)
-    - `--text-md: 1rem` (16px)
-    - `--text-lg: 1.125rem` (18px)
-    - `--text-xl: 1.25rem` (20px)
-    - `--text-2xl: 1.5rem` (24px)
-    - `--text-display: 2.5rem` (40px)
-    - `--leading-tight: 1.2`
-    - `--leading-normal: 1.5`
-    - `--leading-relaxed: 1.75`
-    - `--font-regular: 400`
-    - `--font-medium: 500`
-    - `--font-bold: 700`
-  - Radius: `--radius-sm`, `--radius-md`, `--radius-lg`
-- **Semantic color tokens (dark mode ready):**
-  ```css
+
+**Spacing (8px grid):**
+```css
+--space-xs: 4px;
+--space-sm: 8px;
+--space-md: 16px;
+--space-lg: 24px;
+--space-xl: 40px;
+--space-2xl: 64px;
+```
+
+**Typography:**
+```css
+--text-sm: 0.875rem;    /* 14px */
+--text-md: 1rem;        /* 16px */
+--text-lg: 1.125rem;    /* 18px */
+--text-xl: 1.25rem;     /* 20px */
+--text-2xl: 1.5rem;     /* 24px */
+--text-display: 2.5rem; /* 40px */
+--leading-tight: 1.2;
+--leading-normal: 1.5;
+--leading-relaxed: 1.75;
+--font-regular: 400;
+--font-medium: 500;
+--font-bold: 700;
+```
+
+**Colors (4-role system):**
+```css
+--color-primary: [from brief];
+--color-surface: [from brief];
+--color-muted: [from brief];
+--color-accent: [from brief];
+```
+
+**Semantic tokens (dark mode ready):**
+```css
+:root {
+  --color-bg: var(--color-surface);
+  --color-text: oklch(15% 0 0);
+  --color-text-muted: oklch(45% 0 0);
+  --color-border: oklch(88% 0 0);
+}
+@media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: var(--color-surface);
-    --color-text: oklch(15% 0 0);
-    --color-text-muted: oklch(45% 0 0);
-    --color-border: oklch(88% 0 0);
+    --color-bg: oklch(12% 0 0);
+    --color-text: oklch(92% 0 0);
+    --color-text-muted: oklch(65% 0 0);
+    --color-border: oklch(25% 0 0);
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-bg: oklch(12% 0 0);
-      --color-text: oklch(92% 0 0);
-      --color-text-muted: oklch(65% 0 0);
-      --color-border: oklch(25% 0 0);
-    }
-  }
-  ```
-- **Font loading:**
-  - Add `<link rel="preconnect">` before font imports
-  - Use `font-display: swap` on all `@font-face`
-  - Define fallback font stack for each custom font
+}
+```
+
+**Other tokens:**
+```css
+--radius-sm: 4px;
+--radius-md: 8px;
+--radius-lg: 16px;
+--shadow-soft: 0 2px 8px rgba(0,0,0,.06);
+--shadow-medium: 0 4px 24px rgba(0,0,0,.10);
+--shadow-strong: 0 8px 48px rgba(0,0,0,.18);
+--ease-default: cubic-bezier(.4,0,.2,1);
+--duration-fast: 150ms;
+--duration-normal: 250ms;
+--duration-slow: 400ms;
+```
+
+**Font loading:**
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+```
+```css
+@font-face {
+  font-display: swap;
+  /* define fallback stack */
+}
+```
+
+**taste-skill:** Reference https://github.com/Leonxlnx/taste-skill/tree/main for design principles. Pin to a specific commit SHA before use.
+
+---
 
 ### Assemble (ANF: A)
-- Read component prompts from `components/*.txt` (from 21st.dev "Copy Prompt" workflow)
-- Implement each as a semantic `<section id="...">` element
-- If no prompts exist: generate sections using taste skill principles
-- All values via CSS custom properties — zero hard-coded colors/sizes
+
+- Read component prompts from `components/*.txt` if they exist
+- Otherwise generate sections from the brief: hero, features, social proof, CTA, footer
+- Every section is a semantic `<section id="...">` element
 
 **ARIA Landmarks (required):**
-- Wrap page with: `<header>`, `<main>`, `<nav>`, `<footer>`
-- Every section gets `role="region"` with `aria-label` if no heading
-- Example structure:
-  ```html
-  <header>...</header>
-  <nav aria-label="Main navigation">...</nav>
-  <main>
-    <section aria-labelledby="hero-heading">...</section>
-  </main>
-  <footer>...</footer>
-  ```
+```html
+<header>...</header>
+<nav aria-label="Main navigation">...</nav>
+<main>
+  <section aria-labelledby="hero-heading">...</section>
+  <section aria-labelledby="features-heading">...</section>
+</main>
+<footer>...</footer>
+```
+Every section without a visible heading gets `role="region" aria-label="..."`.
 
-**Image & Video Rules (required for CLS prevention):**
-- Always include `width` and `height` attributes on `<img>` and `<video>`
-- Use `aspect-ratio` CSS to maintain proportions
-- Hero images: add `fetchpriority="high"` and `<link rel="preload" as="image">`
-  Example: `<link rel="preload" as="image" href="hero.webp" fetchpriority="high">`
+**Image & Video (required for CLS):**
+- Always set `width` and `height` on `<img>` and `<video>`
+- Use `aspect-ratio` CSS
+- Hero image preload:
+```html
+<link rel="preload" as="image" href="hero.webp" fetchpriority="high">
+<img src="hero.webp" width="1440" height="800" fetchpriority="high" alt="...">
+```
 
-**Component workflow:**
-1. Go to https://21st.dev
-2. Browse and select components
-3. Click "Copy Prompt" → "Claude Code"
-4. Save as `components/01.txt`, `02.txt`, etc.
-5. Run `/frontend-craft assemble`
+**21st.dev workflow (optional):**
+1. Browse https://21st.dev
+2. "Copy Prompt" → "Claude Code"
+3. Save as `components/01.txt`, `02.txt`, etc.
+
+---
 
 ### Normalize (ANF: N)
+
 Replace all hard-coded values with CSS custom properties:
-- Spacing: 8px base grid
-- Typography: max 2 font families, consistent type scale
-- Colors: 4 roles — primary / surface / muted / accent
-- Buttons: single border-radius, single hover pattern
-- Shadows: 3-level scale (soft / medium / strong)
-- Motion: `--ease-default`, `--duration-fast` / `normal` / `slow`
+- Spacing → `--space-*`
+- Typography → `--text-*`, `--leading-*`, `--font-*`
+- Colors → `--color-*` (4-role system)
+- Buttons → single border-radius, single hover pattern
+- Shadows → `--shadow-soft/medium/strong`
+- Motion → `--ease-default`, `--duration-*`
 - Purge purple defaults (#6366f1, indigo-500) if present
 
-**Color Contrast (WCAG 2.1 AA required):**
+**WCAG 2.1 AA (required):**
 - Text on background: minimum 4.5:1 ratio
 - Large text (18px+): minimum 3:1 ratio
-- Verify with: https://webaim.org/resources/contrastchecker/
-- Use `oklch()` for perceptually uniform color adjustments
+- Check: https://webaim.org/resources/contrastchecker/
+- Use `oklch()` for perceptually uniform color tweaks
+
+---
 
 ### Fill (ANF: F)
-- Extract product/company info from project context
-- Research: value propositions, target audience, competitor positioning
-- Write `assets/research.json` with structured findings
-- Replace all placeholder copy with real content:
-  - Headlines: max 8 words
-  - Sublines: max 20 words
-  - CTAs: max 4 words
-- Banned words: "leverage", "seamless", "revolutionary", "transformative"
-- SEO: validate `<title>`, `<meta description>`, `<h1>` hierarchy
-- **Asset generation:**
-  - General images: Playground AI (playgroundai.com) — 500 free/day
-  - Text-overlay images: Ideogram (ideogram.ai) — ~25 free/day
-  - Prompt template: `"High quality [TYPE] for [PRODUCT]. Clean, minimal, premium. No text unless logo."`
-- **Alt Text Rules (required for accessibility):**
-  - Informative images: descriptive alt (max 125 chars)
-    Example: `alt="Dashboard showing monthly revenue trend, up 23%"`
-  - Decorative images: `alt=""` (empty, not missing)
-  - Logo: `alt="[Company name] logo"`
-  - CTA images: describe the action
-  - AI-generated: describe subject + mood, never "AI generated image"
+
+1. Read `craft-brief.md` for product context
+2. Research (WebSearch): value props, target audience pain points, competitor positioning
+3. Write `assets/research.json`
+4. Replace all placeholder copy:
+   - Headlines: max 8 words
+   - Sublines: max 20 words
+   - CTAs: max 4 words
+   - Banned words: "leverage", "seamless", "revolutionary", "transformative", "cutting-edge"
+5. SEO: set `<title>`, `<meta description>`, `<h1>` hierarchy
+
+**Alt text (required):**
+- Informative: descriptive, max 125 chars (`alt="Dashboard showing revenue up 23%"`)
+- Decorative: `alt=""` (empty, not missing)
+- Logo: `alt="[Company name] logo"`
+- AI-generated: describe subject + mood — never write "AI generated image"
+
+**Asset generation:**
+| Tool | URL | Free | Best for |
+|------|-----|------|----------|
+| Playground AI | playgroundai.com | 500/day | Hero, section bg |
+| Ideogram | ideogram.ai | ~25/day | Text-in-image, logos |
+| Higgsfield | higgsfield.ai | 66 credits/day | AI video |
+
+Prompt template: `"High quality [TYPE] for [PRODUCT]. Clean, minimal, premium. No text unless logo."`
+
+---
 
 ### Polish
-**Motion Safety (required):**
-Always wrap animations in motion check:
+
+**Motion safety (required — always wrap animations):**
 ```css
 @media (prefers-reduced-motion: no-preference) {
-  /* animations here */
+  /* all animations here */
 }
-/* OR add at end of stylesheet: */
+```
+Or add globally:
+```css
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 ```
 
-- **Hero video:** `<video autoplay loop muted playsinline>`, `object-fit: cover`, gradient mask
-  ```html
-  <video autoplay loop muted playsinline>
-    <source src="hero.webm" type="video/webm">
-    <source src="hero.mp4" type="video/mp4">
-  </video>
-  ```
-- **Scroll animation:** IntersectionObserver + requestAnimationFrame, or CSS `animation-timeline: scroll()`
-- **Frame sequence:** If `assets/frames/` exists, build scroll-driven frame swap
-- **Video compress:**
-  ```bash
-  ffmpeg -i input.mp4 -vcodec libx264 -crf 28 -movflags +faststart output.mp4
-  ffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 35 -b:v 0 output.webm
-  ```
-- **GIF creation:** `ffmpeg -i video.mp4 -vf "fps=15,scale=480:-1" output.gif`
-- **Deploy workflow:**
-  1. `npx netlify-cli deploy --dir=.` (preview deploy)
-  2. Review the preview URL
-  3. Confirm: "Deploy to production? (y/N)"
-  4. `npx netlify-cli deploy --prod --dir=.`
-- **Verify:** Lighthouse audit, target 90+ score
+**Hero video:**
+```html
+<video autoplay loop muted playsinline style="object-fit:cover">
+  <source src="hero.webm" type="video/webm">
+  <source src="hero.mp4" type="video/mp4">
+</video>
+```
 
-## Design Anti-Patterns (AVOID)
+**Video compress:**
+```bash
+ffmpeg -i input.mp4 -vcodec libx264 -crf 28 -movflags +faststart output.mp4
+ffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 35 -b:v 0 output.webm
+```
 
-- `color: indigo-500` or any purple-as-default
-- Generic card grid layouts everywhere
-- Overused fonts (Inter on everything)
+**Scroll animation:** IntersectionObserver + requestAnimationFrame, or `animation-timeline: scroll()`
+
+**Deploy workflow:**
+```bash
+# 1. Preview
+npx netlify-cli deploy --dir=.
+# 2. Review preview URL
+# 3. Confirm prod deploy with user
+npx netlify-cli deploy --prod --dir=.
+```
+
+**Verify:** Lighthouse audit, target 90+ on all metrics.
+
+---
+
+## Design Rules
+
+**Anti-patterns (never do):**
+- Hard-coded `indigo-500` or purple as default brand color
+- Generic card grid for every section
+- Inter on everything
 - Symmetric, template-looking layouts
-- Stock hero patterns (gradient blob + floating mockup)
+- Gradient blob + floating mockup hero
 
-## Design Principles (FOLLOW)
-
+**Principles (always follow):**
 - Asymmetric layouts with editorial spacing
 - Strong typographic hierarchy (2 font families max)
 - Intentional whitespace — let content breathe
-- Unique section compositions — each section feels crafted
-- Consistent but not monotonous rhythm
+- Each section feels uniquely composed
+- Consistent rhythm, not monotonous repetition
 
-## Asset Generation Tools
+---
 
-| Tool | URL | Free Tier | Best For |
-|------|-----|-----------|----------|
-| Playground AI | playgroundai.com | 500/day | Hero, section bg, feature icons |
-| Ideogram | ideogram.ai | ~25/day | Logos, text-overlay images |
-| Higgsfield/Kling | higgsfield.ai | 66 credits/day | AI video, 5s clips |
-| Netlify | netlify.com | Unlimited deploys | Free CDN hosting + SSL |
+## Execution Rules
+
+- **Never ask mid-task.** All questions happen in Phase 0. After confirmation, execute to completion.
+- **Existing projects:** Read first, adapt to what's there. Don't overwrite working code.
+- **Small requests:** Don't run the full pipeline. Targeted Mode only.
+- **Copy:** Never lorem ipsum in the final output. Research and write real copy.
+- **Code:** All values via CSS custom properties — zero hard-coded colors, sizes, or spacing.

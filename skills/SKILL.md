@@ -66,61 +66,85 @@ Scan the current directory (Glob, Read):
 - Existing design system? (CSS variables, Tailwind config)
 - Existing copy / brand info?
 
-### Step 2: Ask everything at once — with choices
+### Step 2: One question at a time — with lettered options
 
-Format as a single message with numbered questions and lettered options. User responds with just the numbers/letters. Skip questions already answered by context.
+Ask questions **one by one**. Each question is a separate message. Wait for the answer, then ask the next automatically. Do NOT ask multiple questions in one message. Skip questions already answered by context.
 
-**Template:**
+**Question sequence:**
 
+Q1:
 ```
-Başlayalım. Birkaç şey sormam gerekiyor — hepsini tek mesajda cevapla:
-
-1. Bu ne? (bir cümle)
-   _______________________
-
-2. Kime yönelik?
-   a) B2C (bireysel kullanıcı)
-   b) B2B (şirketler)
-   c) Geliştirici / teknik kitle
-   d) Genel / karma
-   e) Diğer: _______
-
-3. Ne lazım?
-   a) Tam site (landing + birden fazla sayfa)
-   b) Sadece landing page
-   c) Belirli bir sayfa: _______
-   d) Mevcut siteye ekleme: _______
-   e) Sadece bir şeyi düzelt: _______
-
-4. Stil?
-   a) Minimal & clean
-   b) Bold & güçlü
-   c) Editorial & magazine
-   d) Kurumsal & güven veren
-   e) Dark mode ağırlıklı
-   f) Oyuncu & enerjik
-   g) Diğer: _______
-
-5. Renkler?
-   a) Marka rengim var: _______
-   b) Sen seç (stilden çıkar)
-
-6. Olmazsa olmaz özellikler? (varsa birkaçını işaretle)
-   a) Contact form
-   b) Pricing / fiyatlandırma tablosu
-   c) Newsletter kaydı
-   d) Blog / içerik alanı
-   e) Auth (login/signup UI)
-   f) Dashboard shell
-   g) Yok / sadece statik
-
-7. Stack?
-   a) Vanilla HTML/CSS/JS (en hızlı, dependency yok)
-   b) Next.js
-   c) Astro
-   d) Ne önerirsen
-   e) Diğer: _______
+Bu ne? (bir cümle — ürün, servis veya amaç)
 ```
+→ Wait for answer. Then:
+
+Q2:
+```
+Kime yönelik?
+  a) B2C — bireysel kullanıcı
+  b) B2B — şirketler
+  c) Geliştirici / teknik kitle
+  d) Genel / karma
+  e) Diğer → yaz
+```
+→ Wait. Then:
+
+Q3:
+```
+Ne lazım?
+  a) Tam site (landing + birden fazla sayfa)
+  b) Sadece landing page
+  c) Belirli bir sayfa → hangisi?
+  d) Mevcut siteye ekleme → ne?
+  e) Küçük bir şeyi düzelt → ne?
+```
+→ Wait. Then:
+
+Q4:
+```
+Stil?
+  a) Minimal & clean
+  b) Bold & güçlü
+  c) Editorial & magazine
+  d) Kurumsal & güven veren
+  e) Dark mode ağırlıklı
+  f) Oyuncu & enerjik
+  g) Diğer → yaz
+```
+→ Wait. Then:
+
+Q5:
+```
+Renkler?
+  a) Marka rengim var → hex yaz
+  b) Sen seç (stilden çıkar)
+```
+→ Wait. Then:
+
+Q6:
+```
+Özellik lazım mı?
+  a) Contact form
+  b) Pricing tablosu
+  c) Newsletter kaydı
+  d) Blog / içerik alanı
+  e) Auth UI (login/signup)
+  f) Dashboard shell
+  g) Yok, sadece statik
+  (birden fazla seçebilirsin, örn: a c)
+```
+→ Wait. Then:
+
+Q7:
+```
+Stack?
+  a) Vanilla HTML/CSS/JS
+  b) Next.js
+  c) Astro
+  d) Ne önerirsen
+  e) Diğer → yaz
+```
+→ Wait for final answer.
 
 ### Step 3: Build brief
 
@@ -150,7 +174,11 @@ Anlıyorum. İşte yapacaklarım:
 Başlayayım mı? (y / değiştir)
 ```
 
-Wait for confirmation. If "değiştir" → adjust specific parts, re-show plan. If "y" → execute without further questions.
+Show plan. Wait for ONE final confirmation ("y" or "değiştir").
+
+**If "y":** Execute the entire pipeline to completion. No more questions. No pauses. No "shall I continue?" between phases. Run straight through to the end.
+
+**If "değiştir":** User edits specific parts inline → update plan → re-confirm → then execute fully.
 
 ### Step 3: Build a brief
 

@@ -1,9 +1,12 @@
 # ccplugin-frontend-craft
 
 ![claude-code](https://img.shields.io/badge/claude--code-plugin-black?style=flat-square)
+![version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)
 ![frontend](https://img.shields.io/badge/frontend-pipeline-blue?style=flat-square)
 ![ai-tools](https://img.shields.io/badge/ai--tools-ANF-purple?style=flat-square)
 ![plugin](https://img.shields.io/badge/plugin-open--source-green?style=flat-square)
+
+> Part of the [Claude Code Plugin Marketplace](https://github.com/SkyWalker2506/claude-marketplace) — `./install.sh frontend-craft`
 
 Claude Code plugin for building high-end frontend sites and applications using the ANF (Assemble → Normalize → Fill) + Polish pipeline.
 

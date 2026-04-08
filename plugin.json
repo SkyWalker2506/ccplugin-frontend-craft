@@ -1,7 +1,7 @@
 {
   "id": "frontend-craft",
   "name": "Frontend Craft",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "ANF frontend pipeline — interview-first, works on Web (Vanilla/Next.js/Astro) and Mobile (Flutter/React Native/Expo), new or existing projects",
   "author": "SkyWalker2506",
   "category": "development",

@@ -2,7 +2,15 @@
 
 ## [Unreleased]
 
+## [2.0.0] — 2026-04-08
+
 ### Added
+- Flutter and React Native / Expo platform support
+- Redesign mode for existing projects (full or section-scoped)
+- Polish mode for existing projects (animation, video, scroll effects)
+- Automatic asset generation with fallback chain (Playground AI → Ideogram → Higgsfield)
+- Interview-first flow with sequential Q&A — fully autonomous after confirmation
+- Interview with choices, file plan preview, and `/help` command
 - Typography scale tokens with concrete values (`--text-sm` → `--text-display`)
 - Spacing scale with px values (`--space-xs: 4px` → `--space-2xl: 64px`)
 - Font loading directives: `preconnect` + `font-display: swap`

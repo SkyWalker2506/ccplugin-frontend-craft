@@ -491,6 +491,7 @@ For functional additions (contact form, pricing, newsletter, auth UI, dashboard,
   --color-text: oklch(15% 0 0);
   --color-text-muted: oklch(45% 0 0);
   --color-border: oklch(88% 0 0);
+  --color-canvas-dark: #0f172a; /* always dark — CTA boxes, dark sections */
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -501,6 +502,14 @@ For functional additions (contact form, pricing, newsletter, auth UI, dashboard,
   }
 }
 ```
+
+**⚠️ Dark mode token rules (critical):**
+- `--color-primary` flips between dark and light in dark mode → **NEVER use as background color**
+- Card/panel backgrounds → always `var(--color-surface)`, never `"white"` hardcoded
+- `color-mix(in srgb, X%, white)` → use `color-mix(in srgb, X%, var(--color-surface))` instead
+- Consistently dark sections (CTA box, hero band) → use `var(--color-canvas-dark)` or hardcode `#0f172a`
+- Toggle pill active state: `background: "white"` → `var(--color-surface)`, text `var(--color-primary)` → `#0f172a` hardcoded
+- White text/icons inside accent/dark backgrounds: always OK, don't change those
 
 **Other tokens:**
 ```css
@@ -575,6 +584,7 @@ Replace all hard-coded values with CSS custom properties:
 - Shadows → `--shadow-soft/medium/strong`
 - Motion → `--ease-default`, `--duration-*`
 - Purge purple defaults (#6366f1, indigo-500) if present
+- **Dark mode audit (required):** grep for `"white"` in inline styles → replace with `var(--color-surface)`. grep for `var(--color-primary)` used as background → replace with `var(--color-canvas-dark)` if it should always be dark, or `var(--color-surface)` if it's a panel
 
 **WCAG 2.1 AA (required):**
 - Text on background: minimum 4.5:1 ratio

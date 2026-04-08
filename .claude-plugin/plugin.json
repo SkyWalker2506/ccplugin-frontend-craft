@@ -1,0 +1,12 @@
+{
+  "name": "frontend-craft",
+  "version": "2.0.0",
+  "description": "ANF frontend pipeline for high-end sites and apps — Web (Vanilla/Next.js/Astro) and Mobile (Flutter/React Native/Expo), new or existing projects.",
+  "author": {
+    "name": "Musab Kara",
+    "url": "https://github.com/SkyWalker2506"
+  },
+  "license": "MIT",
+  "category": "development",
+  "keywords": ["frontend", "web", "nextjs", "react", "astro", "flutter", "react-native", "anf"]
+}

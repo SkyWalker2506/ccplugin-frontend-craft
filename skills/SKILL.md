@@ -14,9 +14,166 @@ Builds $5-10K quality websites and applications. Works on **new or existing** pr
 ## Entry Point
 
 ```
-/frontend-craft          → Interview + build
-/frontend-craft help     → Show command reference
+/frontend-craft           → Interview + build (new or existing project)
+/frontend-craft redesign  → Existing project: keep logic, replace all visual layer
+/frontend-craft polish    → Existing project: improve current design (no structure change)
+/frontend-craft help      → Show command reference
 ```
+
+---
+
+## redesign
+
+**Existing project: keep all logic, data, and routing — replace the entire visual layer.**
+
+Use this when the project works but looks bad, outdated, or inconsistent.
+
+### Step 1: Audit the project silently
+
+Read the codebase (Glob, Read, Grep):
+- List all pages/routes
+- Identify all components/sections
+- Extract existing CSS — note what's hard-coded (colors, spacing, fonts)
+- Find any existing design tokens or CSS variables
+- Note what JS/logic to preserve (forms, API calls, auth, routing)
+
+### Step 2: Interview (4 questions, one by one)
+
+Q1:
+```
+Projeyi inceledim. Şu sayfalar/bileşenler var:
+[listele]
+
+Hepsini mi yeniden tasarlayalım, yoksa belirli sayfalar mı?
+  a) Hepsini
+  b) Sadece şunlar → hangilerini?
+```
+
+Q2:
+```
+Stil yönü?
+  a) Minimal & clean
+  b) Bold & güçlü
+  c) Editorial & magazine
+  d) Kurumsal & güven veren
+  e) Dark mode ağırlıklı
+  f) Oyuncu & enerjik
+  g) Diğer → yaz
+```
+
+Q3:
+```
+Renkler?
+  a) Mevcut renkleri koru
+  b) Marka rengim var → hex yaz
+  c) Sen seç (stilden çıkar)
+```
+
+Q4:
+```
+Animasyon / motion?
+  a) Sade — sadece hover ve geçişler
+  b) Orta — scroll animasyonları ekle
+  c) Premium — hero video, parallax, frame sequence
+  d) Yok — statik kal
+```
+
+### Step 3: Show redesign plan
+
+```
+Redesign planı:
+
+📋 Scope: [X sayfa / Y bileşen]
+🎨 Stil: [seçilen]
+🔒 Korunacaklar: [JS logic, form handlers, API calls, routing]
+🔄 Değişecekler: CSS tamamen, HTML yapısı (semantic düzeltmeler), görseller
+
+Dosya planı:
+  src/styles.css     → sıfırdan yazılır (design tokens + global)
+  components/*.html  → semantic HTML ile yeniden yapılandırılır
+  assets/images/     → gen-assets.sh ile otomatik üretilir
+  [korunanlar]       → dokunulmaz
+
+Başlayayım mı? (y / değiştir)
+```
+
+### Step 4: Execute (after "y")
+
+For each page/component:
+1. Read existing HTML — extract all text content and data attributes
+2. Rewrite HTML with semantic structure (keep text, replace markup)
+3. Write new CSS using design token system
+4. Preserve all JS event handlers, form actions, API endpoints verbatim
+5. Run `bash scripts/gen-assets.sh` for automatic image generation
+6. Apply Normalize pass across all files
+7. Apply Polish if motion ≥ "Orta"
+
+**Never touch:**
+- JavaScript business logic
+- Form `action` and `method` attributes
+- API endpoint URLs
+- Authentication flows
+- Database queries or ORM calls
+- Environment variables
+
+---
+
+## polish
+
+**Existing project: improve the current design without changing structure or logic.**
+
+Use this when the project looks mostly okay but needs refinement — better spacing, animations, typography, color consistency, or performance.
+
+### Step 1: Audit visually
+
+Read CSS, HTML, JS silently. Build a diff list:
+
+Check for:
+- Hard-coded colors (not in variables) → flag each
+- Inconsistent spacing (mixed px values) → flag
+- Missing font-display, preconnect → flag
+- Missing width/height on images → flag
+- Missing prefers-reduced-motion → flag
+- WCAG contrast failures → flag
+- No ARIA landmarks → flag
+- Hard-coded font sizes (not using scale) → flag
+- No hover/focus states on interactive elements → flag
+
+### Step 2: Show polish menu (one question)
+
+```
+Projeyi inceledim. Şu sorunları buldum:
+
+[sorun listesi — etki ve efor ile]
+
+Ne yapalım?
+  a) Hepsini düzelt (önerilen)
+  b) Seç → hangilerini? (numaraları yaz)
+  c) Sadece animasyon / motion ekle
+  d) Sadece renk & tipografi düzelt
+  e) Sadece erişilebilirlik (WCAG) düzelt
+  f) Sadece performans (LCP, CLS, font loading)
+```
+
+Wait for answer. Then execute selected items automatically.
+
+### Step 3: Execute (no more questions)
+
+**Always run in this order:**
+
+1. **Token extraction** — if no CSS variables exist, extract all repeated values and create `--color-*`, `--space-*`, `--text-*` tokens
+2. **Normalize pass** — replace hard-coded values with tokens
+3. **WCAG fixes** — adjust colors to 4.5:1 minimum contrast
+4. **Performance fixes** — add font-display, preconnect, fetchpriority, width/height
+5. **Accessibility fixes** — add ARIA landmarks, alt text, focus states
+6. **Motion additions** — add scroll animations, hover transitions, wrapped in prefers-reduced-motion
+7. **Asset refresh** — if images are placeholders or missing, run gen-assets.sh
+
+**Never touch:**
+- HTML structure (unless adding ARIA)
+- JavaScript logic
+- Routing or server config
+- Any working functionality
 
 ---
 
@@ -37,6 +194,10 @@ When `/frontend-craft help` is called, print this exactly:
 ║  /frontend-craft normalize Unify design system    ║
 ║  /frontend-craft fill     Real copy + assets      ║
 ║  /frontend-craft polish   Animations + deploy     ║
+╠══════════════════════════════════════════════════╣
+║  EXISTING PROJECT                                ║
+║  /frontend-craft redesign Sıfırdan tasarla        ║
+║  /frontend-craft polish   Mevcut tasarımı geliştir║
 ╠══════════════════════════════════════════════════╣
 ║  SHORTCUTS                                       ║
 ║  /frontend-craft add      Add page/section/feature║
